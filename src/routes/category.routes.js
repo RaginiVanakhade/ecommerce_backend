@@ -11,4 +11,11 @@ router.post(
   categoryController.createCategory,
 );
 
+router.get(
+  "/",
+  authenticate,
+  authorize("ADMIN", "MANAGER"),
+  categoryController.getAllCategory,
+);
+
 module.exports = router;
