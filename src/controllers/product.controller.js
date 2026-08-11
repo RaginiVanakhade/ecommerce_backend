@@ -4,7 +4,21 @@ const mongoose = require("mongoose");
 
 const createProduct = async (req, res) => {
   try {
-    const { name, description, price, stock, category, image } = req.body;
+    const { name, description, price, stock, category } = req.body || {};
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Product image is required",
+      });
+    }
+
+    if (!name || !price || !stock || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, price, stock and category are required",
+      });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(category)) {
       return res.status(400).json({
@@ -14,6 +28,7 @@ const createProduct = async (req, res) => {
     }
 
     const isCategory = await Category.findById(category);
+
     if (!isCategory) {
       return res.status(404).json({
         success: false,
@@ -21,21 +36,106 @@ const createProduct = async (req, res) => {
       });
     }
 
-    const product = new Product({
+    const product = await Product.create({
       name,
       description,
       price,
       stock,
       category,
-      image,
+      image: req.file.path,
+      imagePublicId: req.file.filename,
     });
 
-    await product.save();
     res.status(201).json({
       success: true,
       message: "Product created successfully",
+      data: product,
     });
   } catch (error) {
+    console.log("Create Product Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateProduct = async (req, res) => {
+  try {
+    // const { id } = req.params;
+
+    const { id, name, description, price, stock, category } = req.body || {};
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // Validate category only if provided
+    if (category) {
+      if (!mongoose.Types.ObjectId.isValid(category)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Category ID",
+        });
+      }
+
+      const isCategory = await Category.findById(category);
+
+      if (!isCategory) {
+        return res.status(404).json({
+          success: false,
+          message: "Category not found",
+        });
+      }
+
+      product.category = category;
+    }
+
+    // Update normal fields
+    if (name !== undefined) {
+      product.name = name;
+    }
+
+    if (description !== undefined) {
+      product.description = description;
+    }
+
+    if (price !== undefined) {
+      product.price = price;
+    }
+
+    if (stock !== undefined) {
+      product.stock = stock;
+    }
+
+    // Update image
+    if (req.file) {
+      // Delete old image from Cloudinary
+      if (product.imagePublicId) {
+        await cloudinary.uploader.destroy(product.imagePublicId);
+      }
+
+      // Save new image
+      product.image = req.file.path;
+      product.imagePublicId = req.file.filename;
+    }
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.log("Update Product Error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -65,4 +165,5 @@ const getAllProducts = async (req, res) => {
 module.exports = {
   createProduct,
   getAllProducts,
+  updateProduct,
 };

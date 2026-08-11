@@ -12,57 +12,12 @@ const createOrder = async (req, res) => {
     // Logged-in User
     const userId = req.user.id;
 
-    // Find User
-    const user = await User.findById(userId);
+    console.log("userId", userId);
 
-    // Find Product
-    const foundProduct = await Product.findById(product);
-
-    if (!foundProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    // Check Stock
-    if (foundProduct.stock < quantity) {
-      return res.status(400).json({
-        success: false,
-        message: "Insufficient stock",
-      });
-    }
-
-    // Calculate Total
-    const totalAmount = foundProduct.price * quantity;
-
-    // Create Order
-    const order = new Order({
-      user: userId,
+    const order = await orderService.createBuyNowOrder({
+      userId,
       product,
       quantity,
-      totalAmount,
-      status: "PENDING",
-      statusHistory: [
-        {
-          status: "PENDING",
-          updatedBy: userId,
-        },
-      ],
-    });
-
-    await order.save();
-
-    // Reduce Stock
-    foundProduct.stock -= quantity;
-
-    await foundProduct.save();
-
-    await sendOrdersNotification({
-      user,
-      order,
-      product: foundProduct,
-      type: `ORDER_${order.status}`,
     });
 
     res.status(201).json({

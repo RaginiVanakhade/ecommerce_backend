@@ -1,19 +1,13 @@
-const sendWhatsAppMessage = async ({ mobile, message }) => {
-  try {
-    console.log("==================================");
-    console.log("📲 Sending WhatsApp Message...");
-    console.log("To:", mobile);
-    console.log("Message:");
-    console.log(message);
-    console.log("==================================");
+const client = require("../config/twilio");
 
-    return {
-      success: true,
-      message: "WhatsApp sent successfully",
-    };
-  } catch (error) {
-    throw error;
-  }
+const sendWhatsAppMessage = async ({ mobile, message }) => {
+  console.log("Sending WhatsApp...");
+  console.log("Mobile:", mobile);
+  await client.messages.create({
+    from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    to: `whatsapp:+91${mobile}`,
+    body: message,
+  });
 };
 
 module.exports = {
