@@ -22,10 +22,12 @@ router.put(
 );
 
 router.get(
-  "/getAllProducts",
+  "/getCreatedAllProducts",
   authenticate,
   authorize("ADMIN", "MANAGER", "CUSTOMER"),
   productController.getAllProducts,
 );
+
+router.get("/getAllProducts", productController.getAllProducts);
 
 module.exports = router;

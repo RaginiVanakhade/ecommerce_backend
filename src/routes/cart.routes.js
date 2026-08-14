@@ -1,7 +1,6 @@
 const express = require("express");
 
 const router = express.Router();
-console.log("✅ Cart Routes Loaded");
 const cartController = require("../controllers/cart.controller");
 const authenticate = require("../middleware/auth.middleware");
 const authorize = require("../middleware/authorize.middleware");
@@ -10,21 +9,21 @@ router.get("/", authenticate, authorize("CUSTOMER"), cartController.getMyCart);
 
 router.post(
   "/addToCart",
-  authenticate,
+  // authenticate,
   authorize("CUSTOMER"),
   cartController.addToCart,
 );
 
 router.patch(
   "/updateCartQuantity",
-  authenticate,
+  // authenticate,
   authorize("CUSTOMER"),
   cartController.updateCartQuantity,
 );
 
 router.delete(
   "/:productId",
-  authenticate,
+  // authenticate,
   authorize("CUSTOMER"),
   cartController.removeFromCart,
 );

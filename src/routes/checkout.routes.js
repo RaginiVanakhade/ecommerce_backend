@@ -8,8 +8,8 @@ const authorize = require("../middleware/authorize.middleware");
 
 router.post(
   "/",
-  authenticate,
-  authorize("CUSTOMER"),
+  // authenticate,
+  // authorize("CUSTOMER"),
   checkoutController.checkout,
 );
 
