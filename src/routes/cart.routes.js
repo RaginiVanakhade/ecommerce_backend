@@ -5,26 +5,31 @@ const cartController = require("../controllers/cart.controller");
 const authenticate = require("../middleware/auth.middleware");
 const authorize = require("../middleware/authorize.middleware");
 
-router.get("/", authenticate, authorize("CUSTOMER"), cartController.getMyCart);
+router.get(
+  "/",
+  // authenticate,
+  // authorize("CUSTOMER"),
+  cartController.getMyCart,
+);
 
 router.post(
   "/addToCart",
   // authenticate,
-  authorize("CUSTOMER"),
+  // authorize("CUSTOMER"),
   cartController.addToCart,
 );
 
 router.patch(
   "/updateCartQuantity",
   // authenticate,
-  authorize("CUSTOMER"),
+  // authorize("CUSTOMER"),
   cartController.updateCartQuantity,
 );
 
 router.delete(
   "/:productId",
   // authenticate,
-  authorize("CUSTOMER"),
+  // authorize("CUSTOMER"),
   cartController.removeFromCart,
 );
 
