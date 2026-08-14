@@ -8,15 +8,15 @@ const authorize = require("../middleware/authorize.middleware");
 
 router.post(
   "/create-order",
-  // authenticate,
-  // authorize("CUSTOMER"),
+  authenticate,
+  authorize("CUSTOMER"),
   paymentController.createPaymentOrder,
 );
 
 router.post(
   "/verify",
-  // authenticate,
-  // authorize("CUSTOMER"),
+  authenticate,
+  authorize("CUSTOMER"),
   paymentController.verifyPayment,
 );
 

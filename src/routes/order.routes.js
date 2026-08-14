@@ -6,29 +6,29 @@ const authorize = require("../middleware/authorize.middleware");
 
 router.post(
   "/createOrder",
-  // authenticate,
-  // authorize("ADMIN", "MANAGER", "CUSTOMER"),
+  authenticate,
+  authorize("ADMIN", "MANAGER", "CUSTOMER"),
   orderController.createOrder,
 );
 
 router.get(
   "/",
-  // authenticate,
-  // authorize("ADMIN", "MANAGER", "CUSTOMER"),
+  authenticate,
+  authorize("ADMIN", "MANAGER", "CUSTOMER"),
   orderController.getOrders,
 );
 
 router.patch(
   "/updateOrderStatus/:id",
-  // authenticate,
-  // authorize("ADMIN", "MANAGER"),
+  authenticate,
+  authorize("ADMIN", "MANAGER"),
   orderController.updateOrderStatus,
 );
 
 router.get(
   "/:id/timeline",
-  // authenticate,
-  // authorize("ADMIN", "MANAGER", "CUSTOMER"),
+  authenticate,
+  authorize("ADMIN", "MANAGER", "CUSTOMER"),
   orderController.getOrderTimeline,
 );
 
