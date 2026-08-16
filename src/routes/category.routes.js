@@ -11,10 +11,17 @@ router.post(
   categoryController.createCategory,
 );
 
-router.get(
-  "/",
+router.delete(
+  "/:id",
   authenticate,
   authorize("ADMIN", "MANAGER"),
+  categoryController.deleteCategory,
+);
+
+router.get(
+  "/",
+  // authenticate,
+  // authorize("ADMIN", "MANAGER"),
   categoryController.getAllCategory,
 );
 

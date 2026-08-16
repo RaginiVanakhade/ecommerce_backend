@@ -21,6 +21,13 @@ router.put(
   productController.updateProduct,
 );
 
+router.delete(
+  "/deleteProduct/:id",
+  authenticate,
+  authorize("ADMIN", "MANAGER"),
+  productController.deleteProduct,
+);
+
 router.get(
   "/getCreatedAllProducts",
   authenticate,

@@ -8,6 +8,7 @@ const orderRoutes = require("./routes/order.routes");
 const cartRoutes = require("./routes/cart.routes");
 const checkoutRoutes = require("./routes/checkout.routes");
 const paymentRoutes = require("./routes/payment.routes");
+const wishlistRoutes = require("./routes/wishlist.routes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/orders", orderRoutes);
 app.use("/carts", cartRoutes);
 app.use("/checkout", checkoutRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/wishlists", wishlistRoutes);
 
 console.log("Cart Routes Mounted");
 

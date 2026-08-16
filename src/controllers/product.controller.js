@@ -1,6 +1,7 @@
 const Product = require("../models/product.model");
 const Category = require("../models/category.model");
 const mongoose = require("mongoose");
+const cloudinary = require("../config/cloudinary");
 
 const createProduct = async (req, res) => {
   try {
@@ -162,8 +163,53 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Product ID",
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    if (product.imagePublicId) {
+      try {
+        await cloudinary.uploader.destroy(product.imagePublicId);
+      } catch (cloudinaryError) {
+        console.log("Cloudinary delete error:", cloudinaryError.message);
+      }
+    }
+
+    await Product.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.log("Delete Product Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   updateProduct,
+  deleteProduct,
 };

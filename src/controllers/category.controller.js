@@ -1,4 +1,6 @@
 const Category = require("../models/category.model");
+const Product = require("../models/product.model");
+const mongoose = require("mongoose");
 
 const createCategory = async (req, res) => {
   try {
@@ -42,7 +44,52 @@ const getAllCategory = async (req, res) => {
   }
 };
 
+
+const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Category ID",
+      });
+    }
+
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    const productCount = await Product.countDocuments({ category: id });
+
+    if (productCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete category. ${productCount} product(s) are linked to this category.`,
+      });
+    }
+
+    await Category.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createCategory,
   getAllCategory,
+  deleteCategory,
 };
